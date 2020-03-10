@@ -11,8 +11,11 @@ class Api::ProductsController < ApplicationController
       image_url: params[:img],
       description: params[:description],
     )
-    @product.save
-    render "show.json.jb"
+    if @product.save
+      render "show.json.jb"
+    else
+      render json: { errors: @product.error.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def show
@@ -26,13 +29,17 @@ class Api::ProductsController < ApplicationController
     @product.price = params[:input_price] || @product.price
     @product.image = params[:input_img] || @product.image_url
     @product.description = params[:input_description] || @product.description
-    render "show.json.jb"
-  end  
+
+    if @product.save
+      render "show.json.jb"
+    else
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
 
   def destroy
-    @product = Product.find_by(:id params[:id])
+    @product = Product.find_by(id: params[:id])
     @product.destroy
-    render json: {message: "destroyed!"}
-  end  
-
+    render json: { message: "destroyed!" }
+  end
 end
