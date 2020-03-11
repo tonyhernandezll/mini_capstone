@@ -1,6 +1,18 @@
 class Product < ApplicationRecord
-  validates :price, presence: true
+  validates :name, presence: true
   validates :name, uniqueness: true
   validates :price, presence: true
-  validates :price, numerically: { greater_than: 0 }
+  # validates :price, numerically: { greater_than: 0 }
+
+  def is_discounted?
+    price < 10
+  end
+
+  def tax
+    price * 0.09
+  end
+
+  def total
+    price + tax
+  end
 end
